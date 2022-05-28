@@ -375,7 +375,7 @@ make -j8; make DESTDIR=/root/openvas/install install; cp -rv /root/openvas/insta
       - name: setup users
         become: true
         become_user: gvm
-        shell: "/usr/local/sbin/gvmd --create-user=admin --password=eero;"
+        shell: "/usr/local/sbin/gvmd --create-user=admin --password={{GSA-PASSWORD}};"
         tags: create-user 
       - name: setup users2
         become: true
