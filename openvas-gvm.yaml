@@ -373,13 +373,13 @@ make -j8; make DESTDIR=/root/openvas/install install; cp -rv /root/openvas/insta
          mode: '740'
         tags: permissions
       - name: create gsa-password
-        shell: "pwgen 12 1 > /root/openvas/gsa-password"
+        shell: "pwgen 12 1 > /tmp/gsa-password; chown gvm:gvm /tmp/gsa-password; chmod 700 /tmp/gsa-password;"
         tags: pwgen
 
       - name: setup users
         become: true
         become_user: gvm
-        shell: "/usr/local/sbin/gvmd --create-user=admin --password=$(cat /root/openvas/gsa-password);"
+        shell: "/usr/local/sbin/gvmd --create-user=admin --password=$(cat /tmp/gsa-password);"
         tags: gsa-password
         tags: create-user 
       - name: setup users2
