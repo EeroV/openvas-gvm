@@ -15,6 +15,7 @@
       - name: install requirements
         apt:
          pkg:
+         - pwgen
          - build-essential
          - curl
          - texlive-latex-recommended
@@ -371,11 +372,13 @@ make -j8; make DESTDIR=/root/openvas/install install; cp -rv /root/openvas/insta
          path:  /usr/local/sbin/greenbone-feed-sync
          mode: '740'
         tags: permissions
+      - name: create gsa-password
+        shell: "pwgen 12 1 > /root/openvas/gsa-password"
 
       - name: setup users
         become: true
         become_user: gvm
-        shell: "/usr/local/sbin/gvmd --create-user=admin --password={{ GSA-PASSWORD }};"
+        shell: "/usr/local/sbin/gvmd --create-user=admin --password=`cat /root/openvas/gsa-password`;"
         tags: create-user 
       - name: setup users2
         become: true
