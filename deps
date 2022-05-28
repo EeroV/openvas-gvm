@@ -1,0 +1,3 @@
+working ansible and:
+
+ansible-galaxy collection install community.general
