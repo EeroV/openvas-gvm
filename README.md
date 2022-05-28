@@ -11,7 +11,7 @@ Requirements:
 How to run:
 - use download-sources.sh to download sources from internet
 - use (example) command-to-run to execute ansible ..
-- gsa password is saved into file /root/openvas/gsa-password
+- gsa password is saved into file /tmp/gsa-password
 
 Any comments/fixes welcome: eero.volotinen@iki.fi
 

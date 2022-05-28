@@ -425,4 +425,6 @@ make -j8; make DESTDIR=/root/openvas/install install; cp -rv /root/openvas/insta
           name: gsad.service
           enabled: yes
           state: started
-
+      - name: display post install message
+        debug: 
+         msg: "install ready. wait for nvt update. this might take up to hour or so.."
