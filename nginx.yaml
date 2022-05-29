@@ -1,0 +1,45 @@
+---
+  # Author: Eero Volotinen, eero.volotinen@iki.fi
+  # Description: install greenbone (gvm) on debian
+  # - https://greenbone.github.io/source-build/
+  # License: GPL
+  #
+  #
+  # ..
+  #
+  #
+  - name: openvas-gvm installation
+    gather_facts: true
+    hosts: openvas
+    tasks:
+      - name: install requirements
+        apt:
+         pkg:
+         - nginx
+      - name: create directory
+        file:
+         path: /etc/nginx/certs
+         state: directory
+
+      - name: copy config
+        copy:
+          src: files/default
+          dest: /etc/nginx/sites-enabled/default
+
+      - name: copy ssl files-1
+        copy:
+          src: files/ssl_certificate.key
+          dest: /etc/nginx/certs/ssl_certificate.key
+      
+
+      - name: copy ssl files-1
+        copy:
+          src: files/ssl_certificate.crt
+          dest: /etc/nginx/certs/ssl_certificate.crt
+
+      - name: restart nginx
+        systemd:
+         name: nginx
+         state: restarted
+
+      
