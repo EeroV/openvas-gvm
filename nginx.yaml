@@ -1,7 +1,6 @@
 ---
   # Author: Eero Volotinen, eero.volotinen@iki.fi
-  # Description: install greenbone (gvm) on debian
-  # - https://greenbone.github.io/source-build/
+  # Description: nginx ssl test proxy
   # License: GPL
   #
   #
