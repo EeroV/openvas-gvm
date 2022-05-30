@@ -1,1 +1,6 @@
-ANSIBLE_PIPELINING=1 ansible-playbook  openvas-gvm.yaml -i inventory.txt  -l 127.0.0.1 --private-key=/home/eero/.ssh/id_rsa
+# install greenbone from sources
+ANSIBLE_PIPELINING=1 ansible-playbook  openvas-gvm.yaml -i inventory.txt  -l 127.0.0.1 --private-key=/home/path-to/ssh-key/id_rsa
+# install ssl with own files
+ANSIBLE_PIPELINING=1 ansible-playbook  nginx-with-ssl-files.yaml -i inventory.txt  -l 127.0.0.1 --private-key=/home/path-to/ssh-key/id_rsa
+# install with certbot
+ANSIBLE_PIPELINING=1 ansible-playbook  nginx-with-ssl-certbot.yaml -i inventory.txt  -l 127.0.0.1 --private-key=/home/path-to/ssh-key/id_rsa
