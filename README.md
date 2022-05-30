@@ -18,3 +18,17 @@ How to run:
 Note:
 - nginx-with-ssl-certbot.yaml requires working A record and http connectivity from let's encrypt service
 
+Files:
+- openvas-gvm.yaml - main file to install Greebone source edition
+- nginx-with-ssl-files.yaml - nginx ssl proxy for gsa with your own certificate files
+- nginx-with-ssl-certbot.yaml - nginx ssl proxy for gsa with letsencrypt (requires http connections and working a record)
+- files/ssl_certificate.key - your ssl key file
+- files/ssl_certificate.crt - your certificate file
+
+Variables:
+-  ssl domain used with ssl
+domain_name=gsa.example.com
+- email used with certbot
+email=foo@gsa.example.com
+
+## NO SUPPORT AVAILABLE. THANKS ##
