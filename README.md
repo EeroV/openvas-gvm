@@ -1,4 +1,6 @@
 My ansible scripts to install Greenbone source edition on Debian 11.
+Installation tested only on Debian 11. Other versions/distribution require minor/major modifications.
+
 - https://greenbone.github.io/source-build/
 
 Requirements: 
