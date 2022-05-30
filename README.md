@@ -17,3 +17,5 @@ How to run:
 
 Any comments/fixes welcome: eero.volotinen@iki.fi
 
+Note:
+- nginx-with-ssl-certbot.yaml requires working A record and http connectivity from let's encrypt service
