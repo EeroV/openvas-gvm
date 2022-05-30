@@ -7,7 +7,7 @@
   # ..
   #
   #
-  - name: openvas-gvm installation
+  - name: nginx ssl proxy for gsad
     gather_facts: true
     hosts: openvas
     tasks:
