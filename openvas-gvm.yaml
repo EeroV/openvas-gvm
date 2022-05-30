@@ -113,7 +113,6 @@
   -DCMAKE_BUILD_TYPE=Release \
   -DSYSCONFDIR=/etc \
   -DLOCALSTATEDIR=/var ; make -j2; make DESTDIR=/root/openvas/install install; cp -rv /root/openvas/install/* / ; rm -fr /root/openvas/install/* "
-# eero
 ## gvmd-21.4.5.tar.gz#
       - name: "create /root/openvas/gvmd-build"
         file:
