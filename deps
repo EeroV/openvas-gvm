@@ -1,3 +1,4 @@
-working ansible and:
+#!/bin/bash
 
+sudo apt-get install -y ansible
 ansible-galaxy collection install community.general
