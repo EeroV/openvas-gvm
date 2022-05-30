@@ -15,7 +15,6 @@ How to run:
 - use (example) command-to-run to execute ansible ..
 - gsa password is saved into file /tmp/gsa-password
 
-Any comments/fixes welcome: eero.volotinen@iki.fi
-
 Note:
 - nginx-with-ssl-certbot.yaml requires working A record and http connectivity from let's encrypt service
+
