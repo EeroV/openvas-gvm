@@ -1,0 +1,38 @@
+---
+  # Author: Eero Volotinen, eero.volotinen@iki.fi
+  # Description: nginx ssl test proxy
+  # License: GPL
+  #
+  #
+  # ..
+  #
+  #
+  - name: nginx-with-certbot
+    gather_facts: true
+    hosts: openvas
+    tasks:
+      - name: install requirements
+        apt:
+         pkg:
+         - nginx
+         - certbot
+
+      - name: stop nginx
+        systemd:
+         name: nginx
+         state: stopped
+
+      - name: run certbot
+        shell: "echo N | certbot certonly --standalone --preferred-challenges http -d {{ domain_name }} --agree-tos -m {{ email }}"
+
+      - name: copy config
+        template:
+          src: files/default-ssl
+          dest: /etc/nginx/sites-enabled/default
+
+      - name: restart nginx
+        systemd:
+         name: nginx
+         state: restarted
+
+      
