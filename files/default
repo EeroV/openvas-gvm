@@ -1,7 +1,7 @@
 server {
     listen 443 ssl http2;
     listen [::]:443 ssl http2;
-    server_name example.com;
+    server_name {{ domain_name }};
     ssl_certificate /etc/nginx/certs/ssl_certificate.crt;
     ssl_certificate_key /etc/nginx/certs/ssl_certificate.key;
 

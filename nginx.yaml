@@ -21,7 +21,7 @@
          state: directory
 
       - name: copy config
-        copy:
+        template:
           src: files/default
           dest: /etc/nginx/sites-enabled/default
 
