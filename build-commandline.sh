@@ -75,7 +75,7 @@ EOF
 
 echo "commands to run:"
 echo "install gvm:"
-echo "ANSIBLE_PIPELINING=1 ansible-playbook  nginx-with-ssl.yaml -i inventory.txt  -l $ip  --private-key=/home/eero/.ssh/id_rsa"
+echo "ANSIBLE_PIPELINING=1 ansible-playbook openvas-gvm.yaml -i inventory.txt  -l $ip  --private-key=/home/eero/.ssh/id_rsa"
 echo ""
 echo "optional with ssl proxy"
 echo "ANSIBLE_PIPELINING=1 ansible-playbook nginx-with-ssl-files.yaml  -i inventory.txt  -l $ip  --private-key=/home/eero/.ssh/id_rsa"
