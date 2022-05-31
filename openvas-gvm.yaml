@@ -81,7 +81,6 @@
       file:
         path: /root/openvas/install
         state: directory
-        ## gvm libs ##
     - name: "create /root/openvas"
       file:
         path: /root/openvas
@@ -105,7 +104,6 @@
         remote_src: yes
     - name: "compile: gvm-libs-{{ GVM_LIBS_VERSION }}.tar.gz"
       shell: "cd /root/openvas/gvm-libs-build; cmake /root/openvas/gvm-libs-{{ GVM_LIBS_VERSION }} -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=Release -DSYSCONFDIR=/etc -DLOCALSTATEDIR=/var ; make -j2; make DESTDIR=/root/openvas/install install; cp -rv /root/openvas/install/* / ; rm -fr /root/openvas/install/* "
-      ## gvmd-21.4.5.tar.gz#
     - name: "create /root/openvas/gvmd-build"
       file:
         path: /root/openvas/gvmd-build
@@ -121,8 +119,6 @@
         remote_src: yes
     - name: "compile: gvmd-{{ GVMD_VERSION }}.tar.gz"
       shell: " cd /root/openvas/gvmd-build; cmake /root/openvas/gvmd-{{ GVMD_VERSION }}  -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=Release -DLOCALSTATEDIR=/var -DSYSCONFDIR=/etc -DGVM_DATA_DIR=/var -DGVMD_RUN_DIR=/run/gvmd -DOPENVAS_DEFAULT_SOCKET=/run/ospd/ospd-openvas.sock -DGVM_FEED_LOCK_PATH=/var/lib/gvm/feed-update.lock -DSYSTEMD_SERVICE_DIR=/lib/systemd/system -DDEFAULT_CONFIG_DIR=/etc/default -DLOGROTATE_DIR=/etc/logrotate.d; make -j8; make DESTDIR=/root/openvas/install install; cp -rv /root/openvas/install/* / ; rm -fr /root/openvas/install/*;"
-      ## gsa ##
-      #gsa-21.4.4.tar.gz
     - name: "create /root/openvas/gsa-build"
       file:
         path: /root/openvas/gsa-build
@@ -139,8 +135,6 @@
     - name: "compile: gsa-{{GSA_VERSION }}.tar.gz"
       shell: "cd /root/openvas/gsa-{{GSA_VERSION }}; yarnpkg; yarnpkg build; mkdir -p /usr/local/share/gvm/gsad/web/ ; cp -r build/* /usr/local/share/gvm/gsad/web/ "
     - name: "create /root/openvas/openvas-smb-build"
-      ## openvas-smb
-
       file:
         path: /root/openvas/openvas-smb-build
         state: directory
@@ -155,8 +149,6 @@
         remote_src: yes
     - name: "compile: openvas-smb-{{ OPENVAS_SMB_VERSION  }}.tar.gz"
       shell: " cd /root/openvas/openvas-smb-build; cmake /root/openvas/openvas-smb-{{ OPENVAS_SMB_VERSION  }}  -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=Release ; make -j8; make install;"
-      #gsad#
-      #gsad-21.4.4.tar.gz
     - name: "create /root/openvas/gsad-build"
       file:
         path: /root/openvas/gsad-build
@@ -172,8 +164,6 @@
         remote_src: yes
     - name: "compile gsad"
       shell: "cd  /root/openvas/gsad-build;  cmake /root/openvas/gsad-{{ GSAD_VERSION  }}; -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=Release -DSYSCONFDIR=/etc -DLOCALSTATEDIR=/var -DGVMD_RUN_DIR=/run/gvmd -DGSAD_RUN_DIR=/run/gsad -DLOGROTATE_DIR=/etc/logrotate.d;make -j8; make DESTDIR=/root/openvas/install install; cp -rv /root/openvas/install/* / ; rm -fr /root/openvas/install/* "
-      # openvas-scanner
-      #openvas-scanner-21.4.4.tar.gz
     - name: "create /root/openvas/openvas-scanner-build"
       file:
         path: /root/openvas/openvas-scanner-build
@@ -190,7 +180,6 @@
     - name: "compile openvas-scanner"
       shell: "cd  /root/openvas/openvas-scanner-build;  cmake /root/openvas/openvas-scanner-{{ OPENVAS_SCANNER_VERSION  }};-DCMAKE_BUILD_TYPE=Release -DSYSCONFDIR=/etc -DLOCALSTATEDIR=/var -DOPENVAS_FEED_LOCK_PATH=/var/lib/openvas/feed-update.lock -DOPENVAS_RUN_DIR=/run/ospd; make -j8;  make install; "
       tags: openvas-scanner
-      #ospd-openvas-21.4.4.tar.gz
     - name: "create /root/openvas/ospd-openvas-build"
       file:
         path: /root/openvas/ospd-openvas-build
@@ -206,7 +195,6 @@
         remote_src: yes
     - name: "compile ospd-openvas"
       shell: "cd /root/openvas/ospd-openvas-{{ OSPD_OPENVAS_VERSION  }}; python3 -m pip install . "
-      # gvm-tools
     - name: "install gvm-tools"
       shell: "python3 -m pip install --prefix=/usr/local --root=/root/openvas/install --no-warn-script-location gvm-tools ; cp -rv /root/openvas/install/* / ; rm -fr /root/openvas/install/*;"
       tags: gvm-tools
