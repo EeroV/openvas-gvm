@@ -33,6 +33,18 @@
       - name: restart nginx
         systemd:
          name: nginx
+         enabled: yes
          state: restarted
 
+      - name: configure certbot hooks
+        lineinfile:
+         state: present
+         path: /etc/letsencrypt/renewal/{{ domain_name }}.conf
+         line: "renew_hook = systemctl reload nginx"
+
+      - name: enable certbot renewal counter
+        systemd:
+         name: certbot.timer
+         enabled: yes
+         state: started
       

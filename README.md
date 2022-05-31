@@ -1,7 +1,13 @@
+## EASY WAY TO INSTALL GREENBONE source edition on Debian 11 ##
+
 My ansible scripts to install Greenbone source edition on Debian 11.
 Installation tested only on Debian 11. Other versions/distribution require minor/major modifications.
 
 - https://greenbone.github.io/source-build/
+
+- Easy-install:
+ - install requirements using: ./deps
+ - generate needed files and commandline using ./build-commandline.sh -i ip-address -d domain_name -e your-email
 
 Requirements: 
 - Ansible
@@ -30,5 +36,7 @@ Variables:
 domain_name=gsa.example.com
 - email used with certbot
 email=foo@gsa.example.com
+
+
 
 ## NO SUPPORT AVAILABLE. THANKS ##
