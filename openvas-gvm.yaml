@@ -353,6 +353,11 @@
         name: gsad.service
         enabled: yes
         state: started
+    - name: setup cronjobs for daily update
+      cron:
+        job: "export PATH=$PATH:/usr/local/bin:/usr/local/sbin;  /usr/local/sbin/greenbone-nvt-sync ;/usr/local/sbin/greenbone-feed-sync --type SCAP ; /usr/local/sbin/greenbone-feed-sync --type CERT ; /usr/local/sbin/greenbone-feed-sync --type GVMD_DATA;"
+        special_time: daily
+        user: gvm
     - name: display post install message
       debug:
         msg: "install ready. wait for nvt update. this might take up to hour or so.."
