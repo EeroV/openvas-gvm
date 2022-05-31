@@ -29,7 +29,7 @@ ip=""
 # Process the input options. Add options as needed.        #
 ############################################################
 # Get the options
-while getopts ":h:e:d:i:" option; do
+while getopts "he:d:i:" option; do
    case $option in
       h) # display Help
          Help
@@ -73,11 +73,11 @@ GSAD_VERSION=21.4.4
 
 EOF
 
-echo "commands to run:"
-echo "install gvm:"
+echo "#commands to run:"
+echo "#install gvm:"
 echo "ANSIBLE_PIPELINING=1 ansible-playbook openvas-gvm.yaml -i inventory.txt  -l $ip  --private-key=/home/eero/.ssh/id_rsa"
 echo ""
-echo "optional with ssl proxy"
+echo "#optional with ssl proxy"
 echo "ANSIBLE_PIPELINING=1 ansible-playbook nginx-with-ssl-files.yaml  -i inventory.txt  -l $ip  --private-key=/home/eero/.ssh/id_rsa"
-echo "optional with lets encrypt"
+echo "#optional with lets encrypt"
 echo "ANSIBLE_PIPELINING=1 ansible-playbook nginx-with-ssl-certbot.yaml -i inventory.txt  -l $ip  --private-key=/home/eero/.ssh/id_rsa"
