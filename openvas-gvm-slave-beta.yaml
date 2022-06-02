@@ -1,0 +1,370 @@
+# Author: Eero Volotinen, eero.volotinen@iki.fi
+# Description: install greenbone (gvm) on debian
+# - https://greenbone.github.io/source-build/
+# License: GPL
+#
+#
+# ..
+#
+#
+- name: openvas-gvm installation
+  gather_facts: true
+  hosts: openvas
+  tasks:
+    - name: install requirements
+      apt:
+        pkg:
+          - pwgen
+          - build-essential
+          - curl
+          - texlive-latex-recommended
+          - texlive-latex-extra
+          - gcc
+          - cmake
+          - pkg-config
+          - python3
+          - python3-pip
+          - gnupg
+          - libglib2.0-dev
+          - libgpgme-dev
+          - libgnutls28-dev
+          - uuid-dev
+          - libssh-gcrypt-dev
+          - libhiredis-dev
+          - libxml2-dev
+          - libpcap-dev
+          - libnet1-dev
+          - libldap2-dev
+          - libradcli-dev
+          - libglib2.0-dev
+          - libgnutls28-dev
+          - libpq-dev
+          - postgresql-server-dev-13
+          - libical-dev
+          - xsltproc
+          - rsync
+          - nodejs
+          - yarnpkg
+          - libmicrohttpd-dev
+          - libxml2-dev
+          - libglib2.0-dev
+          - libgnutls28-dev
+          - bison
+          - nmap
+          - rsync
+          - libksba-dev
+          - libgpgme-dev
+          - libpcap-dev
+          - libgcrypt20-dev
+          - libgnutls28-dev
+          - libglib2.0-dev
+          - bison
+          - python3
+          - python3-pip
+          - python3-setuptools
+          - python3-packaging
+          - python3-lxml
+          - python3-defusedxml
+          - python3-paramiko
+          - gcc-mingw-w64
+          - libgnutls28-dev
+          - libglib2.0-dev
+          - libpopt-dev
+          - libunistring-dev
+          - heimdal-dev
+          - perl-base
+          - redis-server
+          - postgresql
+          - sudo
+          - python3-psycopg2
+          - gnutls-bin
+    - name: "create /root/openvas/install"
+      file:
+        path: /root/openvas/install
+        state: directory
+    - name: "create /root/openvas"
+      file:
+        path: /root/openvas
+        state: directory
+    - name: "create /root/openvas/gvm-libs"
+      file:
+        path: /root/openvas/gvm-libs
+        state: directory
+    - name: "create /root/openvas/gvm-libs-build"
+      file:
+        path: /root/openvas/gvm-libs-build
+        state: directory
+    - name: "transfer: gvm-libs-{{ GVM_LIBS_VERSION }}.tar.gz"
+      copy:
+        src: files/gvm-libs-{{ GVM_LIBS_VERSION }}.tar.gz
+        dest: /root/openvas/gvm-libs-{{ GVM_LIBS_VERSION }}.tar.gz
+    - name: unpack gvm-libs-{{ GVM_LIBS_VERSION }}.tar.gz
+      unarchive:
+        src: /root/openvas/gvm-libs-{{ GVM_LIBS_VERSION }}.tar.gz
+        dest: /root/openvas
+        remote_src: yes
+    - name: "compile: gvm-libs-{{ GVM_LIBS_VERSION }}.tar.gz"
+      shell: "cd /root/openvas/gvm-libs-build; cmake /root/openvas/gvm-libs-{{ GVM_LIBS_VERSION }} -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=Release -DSYSCONFDIR=/etc -DLOCALSTATEDIR=/var ; make -j2; make DESTDIR=/root/openvas/install install; cp -rv /root/openvas/install/* / ; rm -fr /root/openvas/install/* "
+    - name: "create /root/openvas/gvmd-build"
+      file:
+        path: /root/openvas/gvmd-build
+        state: directory
+    - name: "transfer: {{ GVMD_VERSION }}.tar.gz"
+      copy:
+        src: files/gvmd-{{ GVMD_VERSION }}.tar.gz
+        dest: /root/openvas/gvmd-{{ GVMD_VERSION }}.tar.gz
+    - name: unpack gvmd-{{ GVMD_VERSION }}.tar.gz
+      unarchive:
+        src: /root/openvas/gvmd-{{ GVMD_VERSION }}.tar.gz
+        dest: /root/openvas
+        remote_src: yes
+    - name: "compile: gvmd-{{ GVMD_VERSION }}.tar.gz"
+      shell: " cd /root/openvas/gvmd-build; cmake /root/openvas/gvmd-{{ GVMD_VERSION }}  -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=Release -DLOCALSTATEDIR=/var -DSYSCONFDIR=/etc -DGVM_DATA_DIR=/var -DGVMD_RUN_DIR=/run/gvmd -DOPENVAS_DEFAULT_SOCKET=/run/ospd/ospd-openvas.sock -DGVM_FEED_LOCK_PATH=/var/lib/gvm/feed-update.lock -DSYSTEMD_SERVICE_DIR=/lib/systemd/system -DDEFAULT_CONFIG_DIR=/etc/default -DLOGROTATE_DIR=/etc/logrotate.d; make -j8; make DESTDIR=/root/openvas/install install; cp -rv /root/openvas/install/* / ; rm -fr /root/openvas/install/*;"
+    - name: "create /root/openvas/gsa-build"
+      file:
+        path: /root/openvas/gsa-build
+        state: directory
+    - name: "transfer: gsa-{{GSA_VERSION }}.tar.gz"
+      copy:
+        src: files/gsa-{{GSA_VERSION }}.tar.gz
+        dest: /root/openvas/gsa-{{GSA_VERSION }}.tar.gz
+    - name: unpack gsa-{{GSA_VERSION }}.tar.gz
+      unarchive:
+        src: /root/openvas/gsa-{{GSA_VERSION }}.tar.gz
+        dest: /root/openvas
+        remote_src: yes
+    - name: "compile: gsa-{{GSA_VERSION }}.tar.gz"
+      shell: "cd /root/openvas/gsa-{{GSA_VERSION }}; yarnpkg; yarnpkg build; mkdir -p /usr/local/share/gvm/gsad/web/ ; cp -r build/* /usr/local/share/gvm/gsad/web/ "
+    - name: "create /root/openvas/openvas-smb-build"
+      file:
+        path: /root/openvas/openvas-smb-build
+        state: directory
+    - name: "transfer: openvas-smb-{{ OPENVAS_SMB_VERSION  }}.tar.gz"
+      copy:
+        src: files/openvas-smb-{{ OPENVAS_SMB_VERSION  }}.tar.gz
+        dest: /root/openvas/openvas-smb-{{ OPENVAS_SMB_VERSION  }}.tar.gz
+    - name: unpack openvas-smb-{{ OPENVAS_SMB_VERSION  }}.tar.gz
+      unarchive:
+        src: /root/openvas/openvas-smb-{{ OPENVAS_SMB_VERSION  }}.tar.gz
+        dest: /root/openvas
+        remote_src: yes
+    - name: "compile: openvas-smb-{{ OPENVAS_SMB_VERSION  }}.tar.gz"
+      shell: " cd /root/openvas/openvas-smb-build; cmake /root/openvas/openvas-smb-{{ OPENVAS_SMB_VERSION  }}  -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=Release ; make -j8; make install;"
+    - name: "create /root/openvas/gsad-build"
+      file:
+        path: /root/openvas/gsad-build
+        state: directory
+    - name: "transfer: gsad-{{ GSAD_VERSION  }}.tar.gz"
+      copy:
+        src: files/gsad-{{ GSAD_VERSION  }}.tar.gz
+        dest: /root/openvas/gsad-{{ GSAD_VERSION  }}.tar.gz
+    - name: unpack gsad-{{ GSAD_VERSION  }}.tar.gz
+      unarchive:
+        src: /root/openvas/gsad-{{ GSAD_VERSION  }}.tar.gz
+        dest: /root/openvas
+        remote_src: yes
+    - name: "compile gsad"
+      shell: "cd  /root/openvas/gsad-build;  cmake /root/openvas/gsad-{{ GSAD_VERSION  }}; -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=Release -DSYSCONFDIR=/etc -DLOCALSTATEDIR=/var -DGVMD_RUN_DIR=/run/gvmd -DGSAD_RUN_DIR=/run/gsad -DLOGROTATE_DIR=/etc/logrotate.d;make -j8; make DESTDIR=/root/openvas/install install; cp -rv /root/openvas/install/* / ; rm -fr /root/openvas/install/* "
+    - name: "create /root/openvas/openvas-scanner-build"
+      file:
+        path: /root/openvas/openvas-scanner-build
+        state: directory
+    - name: "transfer: openvas-scanner-{{ OPENVAS_SCANNER_VERSION  }}.tar.gz"
+      copy:
+        src: files/openvas-scanner-{{ OPENVAS_SCANNER_VERSION  }}.tar.gz
+        dest: /root/openvas/openvas-scanner-{{ OPENVAS_SCANNER_VERSION  }}.tar.gz
+    - name: unpack openvas-scanner-{{ OPENVAS_SCANNER_VERSION  }}.tar.gz
+      unarchive:
+        src: /root/openvas/openvas-scanner-{{ OPENVAS_SCANNER_VERSION  }}.tar.gz
+        dest: /root/openvas
+        remote_src: yes
+    - name: "compile openvas-scanner"
+      shell: "cd  /root/openvas/openvas-scanner-build;  cmake /root/openvas/openvas-scanner-{{ OPENVAS_SCANNER_VERSION  }};-DCMAKE_BUILD_TYPE=Release -DSYSCONFDIR=/etc -DLOCALSTATEDIR=/var -DOPENVAS_FEED_LOCK_PATH=/var/lib/openvas/feed-update.lock -DOPENVAS_RUN_DIR=/run/ospd; make -j8;  make install; "
+      tags: openvas-scanner
+    - name: "create /root/openvas/ospd-openvas-build"
+      file:
+        path: /root/openvas/ospd-openvas-build
+        state: directory
+    - name: "transfer: ospd-openvas-{{ OSPD_OPENVAS_VERSION  }}.tar.gz"
+      copy:
+        src: files/ospd-openvas-{{ OSPD_OPENVAS_VERSION  }}.tar.gz
+        dest: /root/openvas/ospd-openvas-{{ OSPD_OPENVAS_VERSION  }}.tar.gz
+    - name: unpack ospd-openvas-{{ OSPD_OPENVAS_VERSION  }}.tar.gz
+      unarchive:
+        src: /root/openvas/ospd-openvas-{{ OSPD_OPENVAS_VERSION  }}.tar.gz
+        dest: /root/openvas
+        remote_src: yes
+    - name: "compile ospd-openvas"
+      shell: "cd /root/openvas/ospd-openvas-{{ OSPD_OPENVAS_VERSION  }}; python3 -m pip install . "
+    - name: "install gvm-tools"
+      shell: "python3 -m pip install --prefix=/usr/local --root=/root/openvas/install --no-warn-script-location gvm-tools ; cp -rv /root/openvas/install/* / ; rm -fr /root/openvas/install/*;"
+      tags: gvm-tools
+    - name: create /etc/ld.so.conf.d/openvas.conf
+      copy:
+        dest: /etc/ld.so.conf.d/openvas.conf
+        content: "/usr/local/lib"
+    - name: reload ldconfig
+      shell: "ldconfig"
+    - name: create gvm group
+      group:
+        name: gvm
+    - name: create user and groups
+      user:
+        name: gvm
+        groups: gvm, sudo, redis
+        shell: /usr/sbin/nologin
+        state: present
+    - name: modify sudoers
+      community.general.sudoers:
+        name: allow-gvm
+        user: gvm
+        commands: /usr/local/sbin/openvas
+        nopassword: true
+    - name: setup redis
+      copy:
+        src: files/redis-openvas.conf
+        dest: /etc/redis/redis-openvas.conf
+        owner: redis
+        group: redis
+    - name: db address
+      copy:
+        dest: /etc/openvas/openvas.conf
+        content: "db_address = /run/redis-openvas/redis.sock"
+    - name: start redis
+      systemd:
+        state: started
+        enabled: yes
+        name: redis-server@openvas.service
+    - name: start postgressql
+      systemd:
+        state: started
+        enabled: yes
+        name: postgresql@13-main
+    - name: createuser
+      become: true
+      become_user: postgres
+      postgresql_user:
+        name: gvm
+    - name: create db
+      become: true
+      become_user: postgres
+      postgresql_db:
+        name: gvmd
+        owner: gvm
+    - name: create db query
+      become: true
+      become_user: postgres
+      postgresql_query:
+        db: gvmd
+        query: "create role dba with superuser noinherit; grant dba to gvm; create extension \"uuid-ossp\"; create extension \"pgcrypto\";   "
+    - name: setup systemd1 files
+      copy:
+        src: files/ospd-openvas.service
+        dest: /etc/systemd/system/ospd-openvas.service
+    - name: setup systemd2 files
+      copy:
+        src: files/gvmd.service
+        dest: /etc/systemd/system/gvmd.service
+    - name: setup systemd3 files
+      copy:
+        src: files/gsad.service
+        dest: /etc/systemd/system/gsad.service
+    - name: chmod directories
+      file:
+        path: "{{ item }}"
+        owner: gvm
+        group: gvm
+        recurse: yes
+      with_items: ["/var/lib/gvm", "/var/lib/openvas", "/var/log/gvm", "/run/gvmd", "/run/gsad", "/run/ospd"]
+    - name: setup permissions 2
+      file:
+        path: /usr/local/sbin/gvmd
+        owner: gvm
+        group: gvm
+        mode: '6750'
+    - name: setup permissions 3
+      file:
+        path: /usr/local/bin/greenbone-nvt-sync
+        owner: gvm
+        group: gvm
+    - name: setup permissions 4
+      file:
+        path: "{{ item }}"
+        mode: g+srw
+        recurse: yes
+      with_items: ["/var/lib/gvm", "/var/lib/openvas", "/var/log/gvm"]
+    - name: setup permissions 5
+      file:
+        path: "{{ item }}"
+        owner: gvm
+        group: gvm
+        mode: '740'
+      with_items: ["/usr/local/sbin/greenbone-certdata-sync", "/usr/local/sbin/greenbone-scapdata-sync", "/usr/local/sbin/greenbone-feed-sync"]
+    - name: setup permissions 6
+      file:
+        path: /usr/local/sbin/greenbone-feed-sync
+        mode: '740'
+      tags: permissions
+    - name: create gsa-password
+      shell: "pwgen 12 1 > /tmp/gsa-password; chown gvm:gvm /tmp/gsa-password; chmod 700 /tmp/gsa-password;"
+      tags: pwgen
+    - name: setup users
+      become: true
+      become_user: gvm
+      shell: "/usr/local/sbin/gvmd --create-user=admin --password=$(cat /tmp/gsa-password);"
+      tags: gsa-password
+      tags: create-user
+    - name: setup users2
+      become: true
+      become_user: gvm
+      shell: "/usr/local/sbin/gvmd --modify-setting 78eceaec-3385-11ea-b237-28d24461215b --value `/usr/local/sbin/gvmd --get-users --verbose | grep admin | awk '{print $2}'`"
+      tags: create-user2
+    - name: setup-feeds-nvt
+      become: true
+      become_user: gvm
+      shell: "export PATH=$PATH:/usr/local/bin:/usr/local/sbin; greenbone-nvt-sync "
+    - name: setup-feeds-scap
+      become: true
+      become_user: gvm
+      shell: "export PATH=$PATH:/usr/local/bin:/usr/local/sbin; greenbone-feed-sync --type SCAP "
+    - name: setup-feeds-cert
+      become: true
+      become_user: gvm
+      shell: "export PATH=$PATH:/usr/local/bin:/usr/local/sbin;  greenbone-feed-sync --type CERT "
+    - name: setup-feeds-gvmd
+      become: true
+      become_user: gvm
+      shell: "export PATH=$PATH:/usr/local/bin:/usr/local/sbin;  greenbone-feed-sync --type GVMD_DATA"
+      tags: gvmd
+    - name: setup-certificates
+      become: true
+      become_user: gvm
+      shell: "export PATH=$PATH:/usr/local/bin:/usr/local/sbin;  export GVM_CERTIFICATE_LIFETIME=3600; export GVM_CERTIFICATE_HOSTNAME={{ domain_name }} ; gvm-manage-certs -a -f"
+      tags: certs
+    - name: daemon reload
+      systemd:
+        daemon_reload: yes
+    - name: start ospd-openvas.service
+      systemd:
+        name: ospd-openvas.service
+        enabled: yes
+        state: started
+    - name: start gvmd.service
+      systemd:
+        name: gvmd.service
+        enabled: yes
+        state: started
+    - name: start gsad.service
+      systemd:
+        name: gsad.service
+        enabled: yes
+        state: started
+    - name: setup cronjobs for daily update
+      cron:
+        name: "update feeds daily"
+        job: "export PATH=$PATH:/usr/local/bin:/usr/local/sbin;  /usr/local/sbin/greenbone-nvt-sync ;/usr/local/sbin/greenbone-feed-sync --type SCAP ; /usr/local/sbin/greenbone-feed-sync --type CERT ; /usr/local/sbin/greenbone-feed-sync --type GVMD_DATA;"
+        special_time: daily
+        user: gvm
+    - name: display post install message
+      debug:
+        msg: "install ready. wait for nvt update. this might take up to hour or so.."
