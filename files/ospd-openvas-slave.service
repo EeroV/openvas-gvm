@@ -1,0 +1,21 @@
+[Unit]
+Description=OSPd Wrapper for the OpenVAS Scanner (ospd-openvas)
+Documentation=man:ospd-openvas(8) man:openvas(8)
+After=network.target networking.service redis-server@openvas.service
+Wants=redis-server@openvas.service
+ConditionKernelCommandLine=!recovery
+
+[Service]
+Type=forking
+User=gvm
+Group=gvm
+RuntimeDirectory=ospd
+RuntimeDirectoryMode=2775
+PIDFile=/run/ospd/ospd-openvas.pid
+ExecStart=/usr/local/bin/ospd-openvas --unix-socket /run/ospd/ospd-openvas.sock --pid-file /run/ospd/ospd-openvas.pid --log-file /var/log/gvm/ospd-openvas.log --log-level DEBUG  --lock-file-dir /var/lib/openvas --socket-mode 0o770 -p 9390 -b 0.0.0.0 -k /var/lib/gvm/private/CA/serverkey.pem -c /var/lib/gvm/CA/servercert.pem --ca-file /var/lib/gvm/CA/cacert.pem 
+SuccessExitStatus=SIGKILL
+Restart=always
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target
