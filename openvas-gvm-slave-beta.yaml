@@ -381,15 +381,6 @@
         job: "export PATH=$PATH:/usr/local/bin:/usr/local/sbin;  /usr/local/sbin/greenbone-nvt-sync ;/usr/local/sbin/greenbone-feed-sync --type SCAP ; /usr/local/sbin/greenbone-feed-sync --type CERT ; /usr/local/sbin/greenbone-feed-sync --type GVMD_DATA;"
         special_time: daily
         user: gvm
-# - name: chmod directories
-#      file:
-#        path: "{{ item }}"
-#        owner: gvm
-#        group: gvm
-#        recurse: yes
-#      with_items: ["/var/lib/gvm", "/var/lib/openvas", "/var/log/gvm", "/run/gvmd", "/run/gsad", "/run/ospd"]
-
-
 
     - name: set sysctl values
       sysctl:
