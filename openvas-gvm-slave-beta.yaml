@@ -208,10 +208,13 @@
     - name: create gvm group
       group:
         name: gvm
+    - name: create pcap group
+      group:
+        name: pcap
     - name: create user and groups
       user:
         name: gvm
-        groups: gvm, sudo, redis
+        groups: gvm, sudo, redis, pcap
         shell: /usr/sbin/nologin
         state: present
     - name: modify sudoers
@@ -259,7 +262,7 @@
         query: "create role dba with superuser noinherit; grant dba to gvm; create extension \"uuid-ossp\"; create extension \"pgcrypto\";   "
     - name: setup systemd1 files
       copy:
-        src: files/ospd-openvas.service
+        src: files/ospd-openvas-slave.service
         dest: /etc/systemd/system/ospd-openvas.service
     - name: setup systemd2 files
       copy:
@@ -269,6 +272,12 @@
       copy:
         src: files/gsad.service
         dest: /etc/systemd/system/gsad.service
+
+    - name: setup systemd4 files
+      copy:
+        src: files/disable-thp.service
+        dest: /etc/systemd/system/disable-thp.service
+
     - name: chmod directories
       file:
         path: "{{ item }}"
@@ -344,6 +353,13 @@
     - name: daemon reload
       systemd:
         daemon_reload: yes
+   
+    - name: start disable-thp.service
+      systemd: 
+       name: disable-thp.service
+       enabled: yes
+       state: started
+
     - name: start ospd-openvas.service
       systemd:
         name: ospd-openvas.service
@@ -365,6 +381,69 @@
         job: "export PATH=$PATH:/usr/local/bin:/usr/local/sbin;  /usr/local/sbin/greenbone-nvt-sync ;/usr/local/sbin/greenbone-feed-sync --type SCAP ; /usr/local/sbin/greenbone-feed-sync --type CERT ; /usr/local/sbin/greenbone-feed-sync --type GVMD_DATA;"
         special_time: daily
         user: gvm
+# - name: chmod directories
+#      file:
+#        path: "{{ item }}"
+#        owner: gvm
+#        group: gvm
+#        recurse: yes
+#      with_items: ["/var/lib/gvm", "/var/lib/openvas", "/var/log/gvm", "/run/gvmd", "/run/gsad", "/run/ospd"]
+
+
+
+    - name: set sysctl values
+      sysctl:
+       name: net.core.somaxconn
+       value: 1024
+       state: present
+       reload: yes
+       sysctl_file: /etc/sysctl.conf       
+      
+    - name: set sysctl values
+      sysctl:
+       name: vm.overcommit_memory
+       value: 1
+       state: present
+       reload: yes
+       sysctl_file: /etc/sysctl.conf
+
+    - name: set permissions
+      file: 
+       path: /usr/sbin/tcpdump
+       group: pcap
+
+    - name: set permissions
+      file:
+       path: /usr/sbin/tcpdump
+       group: pcap
+       mode: '750'
+
+
+#sudo setcap cap_net_raw,cap_net_admin=eip /usr/sbin/tcpdump
+#sudo setcap cap_net_raw,cap_net_admin=eip /opt/gvm/bin/wmic
+#sudo setcap cap_net_raw,cap_net_admin=eip /opt/gvm/bin/winexe
+#sudo setcap cap_net_raw,cap_net_admin=eip /opt/gvm/bin/openvas-nasl
+#sudo setcap cap_net_raw,cap_net_admin=eip /opt/gvm/bin/openvas-nasl-lint
+#sudo setcap cap_net_raw,cap_net_admin=eip /opt/gvm/sbin/openvas
+#sudo setcap cap_net_raw,cap_net_admin=eip /opt/gvm/bin/ospd-scanner/bin/ospd-openvas
+
+#community.general.capabilities module 
+# cap_net_raw,cap_net_admin
+    - name: setcap
+      community.general.capabilities:
+       name: cap_net_raw
+       state: present
+       path: "{{ item }}"
+      with_items: ["/usr/sbin/tcpdump","/usr/local/bin/wmic","/usr/local/bin/winexe", "/usr/lcal/bin/openvas-nasl","/usr/local/bin/openvas-nasl-lint","/usr/local/sbin/openvas","/usr/local/bin/ospd-openvas"]    
+
+
+    - name: setcap
+      community.general.capabilities:
+       name: cap_net_admin
+       state: present
+       path: "{{ item }}"
+      with_items: ["/usr/sbin/tcpdump","/usr/local/bin/wmic","/usr/local/bin/winexe", "/usr/lcal/bin/openvas-nasl","/usr/local/bin/openvas-nasl-lint","/usr/local/sbin/openvas","/usr/local/bin/ospd-openvas"]
+
     - name: display post install message
       debug:
         msg: "install ready. wait for nvt update. this might take up to hour or so.."
