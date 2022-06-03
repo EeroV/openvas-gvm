@@ -409,12 +409,12 @@
 
     - name: set permissions
       file: 
-       path: /usr/sbin/tcpdump
+       path: /usr/bin/tcpdump
        group: pcap
 
     - name: set permissions
       file:
-       path: /usr/sbin/tcpdump
+       path: /usr/bin/tcpdump
        group: pcap
        mode: '750'
 
@@ -429,20 +429,15 @@
 
 #community.general.capabilities module 
 # cap_net_raw,cap_net_admin
+#capability:
     - name: setcap
       community.general.capabilities:
-       name: cap_net_raw
+       capability: cap_net_raw,cap_net_admin=eip
        state: present
        path: "{{ item }}"
-      with_items: ["/usr/sbin/tcpdump","/usr/local/bin/wmic","/usr/local/bin/winexe", "/usr/lcal/bin/openvas-nasl","/usr/local/bin/openvas-nasl-lint","/usr/local/sbin/openvas","/usr/local/bin/ospd-openvas"]    
+      with_items: ["/usr/bin/tcpdump","/usr/local/bin/wmic","/usr/local/bin/winexe", "/usr/local/bin/openvas-nasl","/usr/local/bin/openvas-nasl-lint","/usr/local/sbin/openvas","/usr/local/bin/ospd-openvas"]    
 
 
-    - name: setcap
-      community.general.capabilities:
-       name: cap_net_admin
-       state: present
-       path: "{{ item }}"
-      with_items: ["/usr/sbin/tcpdump","/usr/local/bin/wmic","/usr/local/bin/winexe", "/usr/lcal/bin/openvas-nasl","/usr/local/bin/openvas-nasl-lint","/usr/local/sbin/openvas","/usr/local/bin/ospd-openvas"]
 
     - name: display post install message
       debug:
