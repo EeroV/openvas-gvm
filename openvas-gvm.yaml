@@ -11,9 +11,27 @@
   gather_facts: true
   hosts: openvas
   tasks:
+
+#    - name: add sign key
+ #     apt_key:
+ #      url: https://dl.yarnpkg.com/debian/pubkey.gpg
+ #      state: present
+
+  #  - name: install repository
+  #    ansible.builtin.apt_repository:
+  #     repo: deb https://dl.yarnpkg.com/debian/ stable main
+  #     state: present
+
+   # - name: remove yarnpkg
+   #   apt:
+   #    update_cache: yes
+   #    pkg: yarnpkg
+   #    state: absent 
+
     - name: install requirements
       apt:
         pkg:
+          - yarnpkg
           - pwgen
           - python3-psycopg2
           - cmake
@@ -72,6 +90,13 @@
           - texlive-latex-extra
           - perl-base
           - xml-twig-tools
+
+  #  - name: install requirements
+   #   apt:
+    #    pkg:
+     #     - yarn
+
+
 
     - name: "create /root/openvas/install"
       file:
@@ -234,7 +259,7 @@
       systemd:
         state: started
         enabled: yes
-        name: postgresql@13-main
+        name: postgresql@12-main
     - name: createuser
       become: true
       become_user: postgres
