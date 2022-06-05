@@ -58,6 +58,7 @@ cat > inventory.txt << EOF
 $ip
 
 [openvas:vars]
+os="ubuntu"
 domain_name=$domain
 email=$email
 host_key_checking = False

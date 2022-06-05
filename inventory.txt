@@ -3,6 +3,7 @@
 
 
 [openvas:vars]
+os="ubuntu"
 # ssl domain
 domain_name=gsa.example.com
 # my email
