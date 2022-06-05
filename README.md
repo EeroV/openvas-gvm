@@ -1,6 +1,6 @@
-## EASY WAY TO INSTALL GREENBONE source edition on Debian 11 ##
+## EASY WAY TO INSTALL GREENBONE source edition on UBuntu-lts ##
 
-My ansible scripts to install Greenbone source edition on Debian 11.
+My ansible scripts to install Greenbone source edition on UBuntu-lts.
 Installation tested only on Debian 11. Other versions/distribution require minor/major modifications.
 
 - https://greenbone.github.io/source-build/
