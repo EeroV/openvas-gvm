@@ -15,69 +15,64 @@
       apt:
         pkg:
           - pwgen
-          - build-essential
-          - curl
-          - texlive-latex-recommended
-          - texlive-latex-extra
-          - gcc
+          - python3-psycopg2
           - cmake
           - pkg-config
-          - python3
-          - python3-pip
-          - gnupg
-          - libglib2.0-dev
-          - libgpgme-dev
+          - gcc-mingw-w64
+          - gnutls-bin
           - libgnutls28-dev
-          - uuid-dev
-          - libssh-gcrypt-dev
-          - libhiredis-dev
           - libxml2-dev
-          - libpcap-dev
-          - libnet1-dev
+          - libssh-dev
+          - libssl-dev
+          - libunistring-dev
           - libldap2-dev
+          - libgcrypt-dev
+          - libpcap-dev
+          - libgpgme-dev
           - libradcli-dev
           - libglib2.0-dev
-          - libgnutls28-dev
-          - libpq-dev
-          - postgresql-server-dev-13
-          - libical-dev
-          - xsltproc
-          - rsync
-          - nodejs
-          - yarnpkg
-          - libmicrohttpd-dev
-          - libxml2-dev
-          - libglib2.0-dev
-          - libgnutls28-dev
-          - bison
-          - nmap
-          - rsync
           - libksba-dev
-          - libgpgme-dev
-          - libpcap-dev
-          - libgcrypt20-dev
-          - libgnutls28-dev
-          - libglib2.0-dev
+          - libical-dev
+          - libpq-dev
+          - libopenvas-dev
+          - libpopt-dev
+          - libnet1-dev
+          - libmicrohttpd-dev
+          - redis-server
+          - libhiredis-dev
+          - doxygen
+          - xsltproc
+          - uuid-dev
+          - graphviz
           - bison
-          - python3
-          - python3-pip
-          - python3-setuptools
-          - python3-packaging
+          - postgresql
+          - postgresql-contrib
+          - postgresql-server-dev-all
+          - heimdal-dev
+          - xmltoman
+          - nmap
+          - npm
+          - nodejs
+          - virtualenv
+          - gnupg
+          - rsync
+          - yarnpkg
+          - python3-paramiko
           - python3-lxml
           - python3-defusedxml
-          - python3-paramiko
-          - gcc-mingw-w64
-          - libgnutls28-dev
-          - libglib2.0-dev
-          - libpopt-dev
-          - libunistring-dev
-          - heimdal-dev
+          - python3-pip
+          - python3-psutil
+          - python3-setuptools
+          - python3-packaging
+          - python3-wrapt
+          - python3-cffi
+          - python3-redis
+          - xmlstarlet
+          - texlive-fonts-recommended
+          - texlive-latex-extra
           - perl-base
-          - redis-server
-          - postgresql
-          - sudo
-          - python3-psycopg2
-          - gnutls-bin
+          - xml-twig-tools
+
     - name: "create /root/openvas/install"
       file:
         path: /root/openvas/install
