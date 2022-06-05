@@ -10,24 +10,9 @@
 - name: openvas-gvm installation
   gather_facts: true
   hosts: openvas
+
+# ubuntu
   tasks:
-
-#    - name: add sign key
- #     apt_key:
- #      url: https://dl.yarnpkg.com/debian/pubkey.gpg
- #      state: present
-
-  #  - name: install repository
-  #    ansible.builtin.apt_repository:
-  #     repo: deb https://dl.yarnpkg.com/debian/ stable main
-  #     state: present
-
-   # - name: remove yarnpkg
-   #   apt:
-   #    update_cache: yes
-   #    pkg: yarnpkg
-   #    state: absent 
-
     - name: install requirements
       apt:
         pkg:
@@ -90,13 +75,76 @@
           - texlive-latex-extra
           - perl-base
           - xml-twig-tools
+      when: os is search("ubuntu")
 
-  #  - name: install requirements
-   #   apt:
-    #    pkg:
-     #     - yarn
-
-
+    - name: install requirements
+      apt:
+        pkg:
+          - pwgen
+          - build-essential
+          - curl
+          - texlive-latex-recommended
+          - texlive-latex-extra
+          - gcc
+          - cmake
+          - pkg-config
+          - python3
+          - python3-pip
+          - gnupg
+          - libglib2.0-dev
+          - libgpgme-dev
+          - libgnutls28-dev
+          - uuid-dev
+          - libssh-gcrypt-dev
+          - libhiredis-dev
+          - libxml2-dev
+          - libpcap-dev
+          - libnet1-dev
+          - libldap2-dev
+          - libradcli-dev
+          - libglib2.0-dev
+          - libgnutls28-dev
+          - libpq-dev
+          - postgresql-server-dev-13
+          - libical-dev
+          - xsltproc
+          - rsync
+          - nodejs
+          - yarnpkg
+          - libmicrohttpd-dev
+          - libxml2-dev
+          - libglib2.0-dev
+          - libgnutls28-dev
+          - bison
+          - nmap
+          - rsync
+          - libksba-dev
+          - libgpgme-dev
+          - libpcap-dev
+          - libgcrypt20-dev
+          - libgnutls28-dev
+          - libglib2.0-dev
+          - bison
+          - python3
+          - python3-pip
+          - python3-setuptools
+          - python3-packaging
+          - python3-lxml
+          - python3-defusedxml
+          - python3-paramiko
+          - gcc-mingw-w64
+          - libgnutls28-dev
+          - libglib2.0-dev
+          - libpopt-dev
+          - libunistring-dev
+          - heimdal-dev
+          - perl-base
+          - redis-server
+          - postgresql
+          - sudo
+          - python3-psycopg2
+          - gnutls-bin
+      when: os is search("debian")
 
     - name: "create /root/openvas/install"
       file:
@@ -255,11 +303,21 @@
         state: started
         enabled: yes
         name: redis-server@openvas.service
+ 
     - name: start postgressql
       systemd:
         state: started
         enabled: yes
         name: postgresql@12-main
+      when: os is search("ubuntu")
+
+    - name: start postgressql
+      systemd:
+        state: started
+        enabled: yes
+        name: postgresql@12-main
+      when: os is search("debian")
+
     - name: createuser
       become: true
       become_user: postgres
