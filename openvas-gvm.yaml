@@ -315,7 +315,7 @@
       systemd:
         state: started
         enabled: yes
-        name: postgresql@12-main
+        name: postgresql@13-main
       when: os is search("debian")
 
     - name: createuser
