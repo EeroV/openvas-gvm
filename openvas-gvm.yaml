@@ -340,6 +340,14 @@
        dest: /var/lib/gvm/
        owner: gvm
        group: gvm
+# /var/lib/gvm
+
+    - name: unpack data-objects for initial resync
+      unarchive:
+       src: files/data-objects.tar.gz
+       dest: /var/lib/gvm/
+       owner: gvm
+       group: gvm
 
 
     - name: setup-feeds-nvt
