@@ -10,7 +10,72 @@
 - name: openvas-gvm installation
   gather_facts: true
   hosts: openvas
+
+# ubuntu
   tasks:
+    - name: install requirements
+      apt:
+        pkg:
+          - yarnpkg
+          - pwgen
+          - python3-psycopg2
+          - cmake
+          - pkg-config
+          - gcc-mingw-w64
+          - gnutls-bin
+          - libgnutls28-dev
+          - libxml2-dev
+          - libssh-dev
+          - libssl-dev
+          - libunistring-dev
+          - libldap2-dev
+          - libgcrypt-dev
+          - libpcap-dev
+          - libgpgme-dev
+          - libradcli-dev
+          - libglib2.0-dev
+          - libksba-dev
+          - libical-dev
+          - libpq-dev
+          - libpopt-dev
+          - libnet1-dev
+          - libmicrohttpd-dev
+          - redis-server
+          - libhiredis-dev
+          - doxygen
+          - xsltproc
+          - uuid-dev
+          - graphviz
+          - bison
+          - postgresql
+          - postgresql-contrib
+          - postgresql-server-dev-all
+          - heimdal-dev
+          - xmltoman
+          - nmap
+          - npm
+          - nodejs
+          - virtualenv
+          - gnupg
+          - rsync
+          - yarnpkg
+          - python3-paramiko
+          - python3-lxml
+          - python3-defusedxml
+          - python3-pip
+          - python3-psutil
+          - python3-setuptools
+          - python3-packaging
+          - python3-wrapt
+          - python3-cffi
+          - python3-redis
+          - xmlstarlet
+          - texlive-fonts-recommended
+          - texlive-latex-extra
+          - perl-base
+          - xml-twig-tools
+      when: os is search("ubuntu")
+
     - name: install requirements
       apt:
         pkg:
@@ -78,6 +143,8 @@
           - sudo
           - python3-psycopg2
           - gnutls-bin
+      when: os is search("debian")
+
     - name: "create /root/openvas/install"
       file:
         path: /root/openvas/install
@@ -120,6 +187,7 @@
         remote_src: yes
     - name: "compile: gvmd-{{ GVMD_VERSION }}.tar.gz"
       shell: " cd /root/openvas/gvmd-build; cmake /root/openvas/gvmd-{{ GVMD_VERSION }}  -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=Release -DLOCALSTATEDIR=/var -DSYSCONFDIR=/etc -DGVM_DATA_DIR=/var -DGVMD_RUN_DIR=/run/gvmd -DOPENVAS_DEFAULT_SOCKET=/run/ospd/ospd-openvas.sock -DGVM_FEED_LOCK_PATH=/var/lib/gvm/feed-update.lock -DSYSTEMD_SERVICE_DIR=/lib/systemd/system -DDEFAULT_CONFIG_DIR=/etc/default -DLOGROTATE_DIR=/etc/logrotate.d; make -j8; make DESTDIR=/root/openvas/install install; cp -rv /root/openvas/install/* / ; rm -fr /root/openvas/install/*;"
+      tags: compile-gvm
     - name: "create /root/openvas/gsa-build"
       file:
         path: /root/openvas/gsa-build
@@ -179,7 +247,7 @@
         dest: /root/openvas
         remote_src: yes
     - name: "compile openvas-scanner"
-      shell: "cd  /root/openvas/openvas-scanner-build;  cmake /root/openvas/openvas-scanner-{{ OPENVAS_SCANNER_VERSION  }};-DCMAKE_BUILD_TYPE=Release -DSYSCONFDIR=/etc -DLOCALSTATEDIR=/var -DOPENVAS_FEED_LOCK_PATH=/var/lib/openvas/feed-update.lock -DOPENVAS_RUN_DIR=/run/ospd; make -j8;  make install; "
+      shell: "cd  /root/openvas/openvas-scanner-build; sed -i 's/g_pattern_match_string/g_pattern_spec_match_string/g'  /root/openvas/openvas-scanner-21.4.4/misc/strutils.c;  cmake /root/openvas/openvas-scanner-{{ OPENVAS_SCANNER_VERSION  }};-DCMAKE_BUILD_TYPE=Release -DSYSCONFDIR=/etc -DLOCALSTATEDIR=/var -DOPENVAS_FEED_LOCK_PATH=/var/lib/openvas/feed-update.lock -DOPENVAS_RUN_DIR=/run/ospd; make -j8;  make install; "
       tags: openvas-scanner
     - name: "create /root/openvas/ospd-openvas-build"
       file:
@@ -235,11 +303,21 @@
         state: started
         enabled: yes
         name: redis-server@openvas.service
+ 
+    - name: start postgressql
+      systemd:
+        state: started
+        enabled: yes
+        name: postgresql
+      when: os is search("ubuntu")
+
     - name: start postgressql
       systemd:
         state: started
         enabled: yes
         name: postgresql@13-main
+      when: os is search("debian")
+
     - name: createuser
       become: true
       become_user: postgres
@@ -319,22 +397,6 @@
       become_user: gvm
       shell: "/usr/local/sbin/gvmd --modify-setting 78eceaec-3385-11ea-b237-28d24461215b --value `/usr/local/sbin/gvmd --get-users --verbose | grep admin | awk '{print $2}'`"
       tags: create-user2
-
-#unpack plugins
-    - name: unpack nvt plugins for initial resync
-      unarchive:
-       src: files/plugins.tar.gz
-       dest: /var/lib/openvas/
-       owner: gvm
-       group: gvm
-
-    - name: unpack scap plugins for initial resync
-      unarchive:
-       src: files/scap-data.tar.gz
-       dest: /var/lib/gvm/
-       owner: gvm
-       group: gvm
-
     - name: setup-feeds-nvt
       become: true
       become_user: gvm
