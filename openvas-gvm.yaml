@@ -319,6 +319,21 @@
       become_user: gvm
       shell: "/usr/local/sbin/gvmd --modify-setting 78eceaec-3385-11ea-b237-28d24461215b --value `/usr/local/sbin/gvmd --get-users --verbose | grep admin | awk '{print $2}'`"
       tags: create-user2
+
+    - name: unpack nvt plugins for initial resync
+      unarchive:
+       src: files/plugins.tar.gz
+       dest: /var/lib/openvas/
+       owner: gvm
+       group: gvm
+
+    - name: unpack scap plugins for initial resync
+      unarchive:
+       src: files/scap-data.tar.gz
+       dest: /var/lib/gvm/
+       owner: gvm
+       group: gvm
+
     - name: setup-feeds-nvt
       become: true
       become_user: gvm
