@@ -334,6 +334,14 @@
        owner: gvm
        group: gvm
 
+    - name: unpack cert-data for initial resync
+      unarchive:
+       src: files/cert-data.tar.gz
+       dest: /var/lib/gvm/
+       owner: gvm
+       group: gvm
+
+
     - name: setup-feeds-nvt
       become: true
       become_user: gvm
