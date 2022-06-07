@@ -10,73 +10,7 @@
 - name: openvas-gvm installation
   gather_facts: true
   hosts: openvas
-
-# ubuntu
   tasks:
-    - name: install requirements
-      apt:
-        pkg:
-          - yarnpkg
-          - pwgen
-          - python3-psycopg2
-          - cmake
-          - pkg-config
-          - gcc-mingw-w64
-          - gnutls-bin
-          - libgnutls28-dev
-          - libxml2-dev
-          - libssh-dev
-          - libssl-dev
-          - libunistring-dev
-          - libldap2-dev
-          - libgcrypt-dev
-          - libpcap-dev
-          - libgpgme-dev
-          - libradcli-dev
-          - libglib2.0-dev
-          - libksba-dev
-          - libical-dev
-          - libpq-dev
-          - libopenvas-dev
-          - libpopt-dev
-          - libnet1-dev
-          - libmicrohttpd-dev
-          - redis-server
-          - libhiredis-dev
-          - doxygen
-          - xsltproc
-          - uuid-dev
-          - graphviz
-          - bison
-          - postgresql
-          - postgresql-contrib
-          - postgresql-server-dev-all
-          - heimdal-dev
-          - xmltoman
-          - nmap
-          - npm
-          - nodejs
-          - virtualenv
-          - gnupg
-          - rsync
-          - yarnpkg
-          - python3-paramiko
-          - python3-lxml
-          - python3-defusedxml
-          - python3-pip
-          - python3-psutil
-          - python3-setuptools
-          - python3-packaging
-          - python3-wrapt
-          - python3-cffi
-          - python3-redis
-          - xmlstarlet
-          - texlive-fonts-recommended
-          - texlive-latex-extra
-          - perl-base
-          - xml-twig-tools
-      when: os is search("ubuntu")
-
     - name: install requirements
       apt:
         pkg:
@@ -144,8 +78,6 @@
           - sudo
           - python3-psycopg2
           - gnutls-bin
-      when: os is search("debian")
-
     - name: "create /root/openvas/install"
       file:
         path: /root/openvas/install
@@ -303,21 +235,11 @@
         state: started
         enabled: yes
         name: redis-server@openvas.service
- 
-    - name: start postgressql
-      systemd:
-        state: started
-        enabled: yes
-        name: postgresql@12-main
-      when: os is search("ubuntu")
-
     - name: start postgressql
       systemd:
         state: started
         enabled: yes
         name: postgresql@13-main
-      when: os is search("debian")
-
     - name: createuser
       become: true
       become_user: postgres
@@ -397,6 +319,22 @@
       become_user: gvm
       shell: "/usr/local/sbin/gvmd --modify-setting 78eceaec-3385-11ea-b237-28d24461215b --value `/usr/local/sbin/gvmd --get-users --verbose | grep admin | awk '{print $2}'`"
       tags: create-user2
+
+#unpack plugins
+    - name: unpack nvt plugins for initial resync
+      unarchive:
+       src: files/plugins.tar.gz
+       dest: /var/lib/openvas/
+       owner: gvm
+       group: gvm
+
+    - name: unpack scap plugins for initial resync
+      unarchive:
+       src: files/scap-data.tar.gz
+       dest: /var/lib/gvm/
+       owner: gvm
+       group: gvm
+
     - name: setup-feeds-nvt
       become: true
       become_user: gvm
