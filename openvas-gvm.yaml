@@ -396,6 +396,16 @@
         job: "export PATH=$PATH:/usr/local/bin:/usr/local/sbin;  /usr/local/sbin/greenbone-nvt-sync ;/usr/local/sbin/greenbone-feed-sync --type SCAP ; /usr/local/sbin/greenbone-feed-sync --type CERT ; /usr/local/sbin/greenbone-feed-sync --type GVMD_DATA;"
         special_time: daily
         user: gvm
+    - name: get password
+      slurp: 
+       src: /tmp/gsa-password
+      register: slurpfile
+      tags: slurp
+
+    - name: display password
+      debug:
+       msg: "password to gsa is: {{ slurpfile['content'] | b64decode }}"
+
     - name: display post install message
       debug:
         msg: "install ready. wait for nvt update. this might take up to hour or so.."
